@@ -13,7 +13,6 @@ def search(start, end, depth):
         print(currentPath)
         if k < depth:
             for n in currentPath[-1].children:
-                
                 if n.value == end:
                     currentPath.append(n)
                     return "Final path: " + str(currentPath)
