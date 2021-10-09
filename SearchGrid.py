@@ -9,6 +9,8 @@ class SearchGrid:
     size = 0
     cmap = None
 
+    visited = set()
+
     def __init__(self, size, ) -> None:
         self.size = size
         self.data = [[1 for x in range(size)] for y in range(size)]
@@ -40,7 +42,7 @@ class SearchGrid:
         self.rebuild()
 
     def valid(self, x, y):
-        return self.get(x, y) != 0 and x >= 0 and y >= 0 and x < self.size and y < self.size
+        return self.get(x, y) != 0 and x >= 0 and y >= 0 and x < self.size - 1 and y < self.size - 1
 
     def neighbors(self, x, y):
         n = []
@@ -58,9 +60,16 @@ class SearchGrid:
         found_path = coords[0]
         frontier = coords[1]
 
+
         for coord in frontier:
             c = coord[-1]
             self.put(c[0], c[1], .8)
+
+        if len(coords) >= 3:
+            visited = coords[2]
+            for coord in visited:
+                self.put(coord[0], coord[1], .8 )
+
 
         for coord in found_path:
             self.put(coord[0], coord[1], .4 )
