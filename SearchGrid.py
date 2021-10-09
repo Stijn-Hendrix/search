@@ -8,22 +8,28 @@ class SearchGrid:
     data = None
     size = 0
     cmap = None
+    blocked_code = 0
 
     visited = set()
 
-    def __init__(self, size, ) -> None:
-        self.size = size
-        self.data = [[1 for x in range(size)] for y in range(size)]
-        self.cmap = matplotlib.colors.ListedColormap(['white', 'green', 'gray', 'red', 'black'])
+    def color_code(self, index):
+        return index / 6 - 0.01
 
-        self.put(8,10,0) 
-        self.put(8,9,0) 
-        self.put(8,8,0) 
-        self.put(8,7,0) 
-        self.put(8,6,0) 
-        self.put(14,10,0) 
-        self.put(14,11,0) 
-        self.put(14,12,0) 
+    def __init__(self, size) -> None:
+        self.size = size
+        self.data = [[self.color_code(1) for x in range(size)] for y in range(size)]
+        self.cmap = matplotlib.colors.ListedColormap(['green', 'white',  'gray', 'blue', 'black', 'red'])
+
+        blocked = self.color_code(4)
+        self.blocked_code = blocked
+        self.put(8,10,blocked) 
+        self.put(8,9,blocked) 
+        self.put(8,8,blocked) 
+        self.put(8,7,blocked) 
+        self.put(8,6,blocked) 
+        self.put(14,10,blocked) 
+        self.put(14,11,blocked) 
+        self.put(14,12,blocked) 
 
 
     def distance(self, start, end):
@@ -42,7 +48,7 @@ class SearchGrid:
         self.rebuild()
 
     def valid(self, x, y):
-        return self.get(x, y) != 0 and x >= 0 and y >= 0 and x < self.size - 1 and y < self.size - 1
+        return self.get(x, y) != self.blocked_code and x >= 0 and y >= 0 and x < self.size - 1 and y < self.size - 1
 
     def neighbors(self, x, y):
         n = []
@@ -63,19 +69,19 @@ class SearchGrid:
 
         for coord in frontier:
             c = coord[-1]
-            self.put(c[0], c[1], .8)
+            self.put(c[0], c[1], self.color_code(2))
 
         if len(coords) >= 3:
             visited = coords[2]
             for coord in visited:
-                self.put(coord[0], coord[1], .8 )
+                self.put(coord[0], coord[1], self.color_code(2))
 
 
         for coord in found_path:
-            self.put(coord[0], coord[1], .4 )
+            self.put(coord[0], coord[1], self.color_code(3))
 
-        self.put(start[0], start[1], .2)
-        self.put(end[0], end[1], 0.2)
+        self.put(start[0], start[1], self.color_code(0))
+        self.put(end[0], end[1],  self.color_code(5))
 
         self.rebuild()
 
@@ -85,7 +91,7 @@ class SearchGrid:
         pyplot.xticks(s)
         pyplot.yticks(s)
         pyplot.ylim(-0.5, -0.5 + self.size)
-        pyplot.imshow(self.data, cmap="gray")
+        pyplot.imshow(self.data, cmap=self.cmap)
         pyplot.show()
 
 
